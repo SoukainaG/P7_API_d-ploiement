@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import joblib
 
 # Chargement du modèle avec joblib
-model = joblib.load(r"C:\Users\SOUKA\Desktop\P7_deploiement\.github\workflows-P7\lightgbm_model.pkl")
+model = joblib.load("lightgbm_model.pkl")
 
 app = Flask(__name__)
 
