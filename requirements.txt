@@ -2,4 +2,4 @@ Flask==2.2.5
 joblib==1.2.0
 imbalanced-learn==0.12.4
 lightgbm==4.5.0
-distutils
+setuptools
