@@ -25,7 +25,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          python -m unittest discover -s tests
+          python -m unittest test_app.py
           # Si pytest est utilisé, remplacez par `pytest`
 
       - name: Deploy to Render
@@ -35,5 +35,5 @@ jobs:
           curl -X POST -H "Authorization: Bearer $RENDER_API_KEY" \
           -H "Accept: application/json" \
           -H "Content-Type: application/json" \
-          -d '{"serviceId": "YOUR_SERVICE_ID", "clearCache": true}' \
-          https://api.render.com/v1/services/YOUR_SERVICE_ID/deploys
+          -d '{"serviceId": "cshp0508fa8c739i0mu0", "clearCache": true}' \
+          https://api.render.com/v1/services/cshp0508fa8c739i0mu0/deploys
