@@ -22,10 +22,10 @@ def predict():
         features = data['features']
         
         # S'assurer que le nombre de caractéristiques est correct
-        if len(features) != 101:  # Supposons que votre modèle nécessite 101 caractéristiques
+        if len(features) != 76:  # Supposons que votre modèle nécessite 76 caractéristiques
             # Remplir les valeurs manquantes avec des zéros
-            features = features + [0] * (101 - len(features))  # Compléter jusqu'à 101
-            features = features[:101]  # S'assurer que nous avons exactement 101 caractéristiques
+            features = features + [0] * (76 - len(features))  # Compléter jusqu'à 76
+            features = features[:76]  # S'assurer que nous avons exactement 76 caractéristiques
 
         # Faire la prédiction
         prediction = model.predict([features])

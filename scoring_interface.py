@@ -49,6 +49,6 @@ if st.button("Calculer le Score"):
         st.write(f"Probabilité de défaut : {probability:.2f}")
         
         # Définition du seuil
-        seuil = 0.57  # Ajustez ce seuil selon votre stratégie de scoring
-        decision = "Crédit Refusé" if probability >= seuil else "Crédit Acoordé"
+        seuil = 0.24  # Ajustez ce seuil selon votre stratégie de scoring
+        decision = "Crédit Accordé" if probability >= seuil else "Crédit Refusé"
         st.write(f"Décision basée sur le seuil : {decision}")
