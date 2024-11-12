@@ -35,5 +35,5 @@ jobs:
           curl -X POST -H "Authorization: Bearer $RENDER_API_KEY" \
           -H "Accept: application/json" \
           -H "Content-Type: application/json" \
-          -d '{"serviceId": "cspldfqj1k6c73avlsd0", "clearCache": true}' \
-          https://api.render.com/v1/services/cspldfqj1k6c73avlsd0/deploys
+          -d '{"serviceId": "csplq50gph6c73ee2ks0", "clearCache": true}' \
+          https://api.render.com/v1/services/csplq50gph6c73ee2ks0/deploys
