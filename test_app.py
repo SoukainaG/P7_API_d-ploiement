@@ -7,8 +7,8 @@ class APITestCase(unittest.TestCase):
         self.app.testing = True
 
     def test_prediction(self):
-        # Liste de 101 caractéristiques (valeurs fictives pour cet exemple)
-        features = [0] * 101  # Remplacez [0] * 101 par les valeurs attendues si nécessaire
+        # Liste de 76 caractéristiques (valeurs fictives pour cet exemple)
+        features = [0] * 76  # Remplacez [0] * 76 par les valeurs attendues si nécessaire
         response = self.app.post("/predict", json={"features": features})
         
         # Vérification du statut et des champs dans la réponse
