@@ -1,12 +1,23 @@
-# Import des librairies
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import joblib
 import numpy as np
+import os
 
 # Chargement du modèle avec joblib
 model = joblib.load("lightgbm_model.pkl")
 
 app = Flask(__name__)
+
+# Route pour l'URL racine ("/")
+@app.route('/')
+def home():
+    return "Bienvenue sur l'API de Prédiction!"
+
+# Route pour le favicon.ico
+@app.route('/favicon.ico')
+def favicon():
+    # Assurez-vous que le fichier favicon.ico est dans le dossier "static"
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
 
 @app.route("/predict", methods=["POST"])
 def predict():
@@ -41,4 +52,6 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Utiliser le port fourni par Render
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
