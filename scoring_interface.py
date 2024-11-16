@@ -1,3 +1,4 @@
+# Importer les bibliothèques nécessaires
 import pandas as pd
 import streamlit as st
 import requests
@@ -5,39 +6,34 @@ import plotly.graph_objects as go
 import plotly.express as px
 import gdown
 import zipfile
-import io
 
-
-# Configurer le titre de la page
+# Configuration de la page Streamlit
 st.set_page_config(page_title="Tableau de Bord de Scoring Client", page_icon=":bar_chart:")
 
-# URL partagée de Google Drive pour le fichier ZIP
-url = 'https://drive.google.com/uc?id=1o9nJqQj4m6TCiuAIn1PUpv_GLDkZdtDl'
-output = 'df_final_cleaned.zip'
+# URL du fichier ZIP partagé via Google Drive
+zip_url = 'https://drive.google.com/uc?id=1o9nJqQj4m6TCiuAIn1PUpv_GLDkZdtDl'
+output_zip = 'df_final_cleaned.zip'
 
-# Télécharger le fichier ZIP depuis Google Drive
+# Télécharger le fichier ZIP
 try:
-    gdown.download(url, output, quiet=False)
-    st.write("Le fichier ZIP a été téléchargé avec succès.")
-    # Vérifier que le fichier est bien un ZIP
-    if not zipfile.is_zipfile(output):
-        st.error("Le fichier téléchargé n'est pas un fichier ZIP valide.")
+    gdown.download(zip_url, output_zip, quiet=False)
+    st.success("Le fichier ZIP a été téléchargé avec succès.")
 except Exception as e:
-    st.error("Erreur lors du téléchargement du fichier ZIP : " + str(e))
+    st.error(f"Erreur lors du téléchargement du fichier ZIP : {e}")
 
-# Décompresser en mémoire et charger les données
+# Décompresser le fichier ZIP et charger les données
 try:
-    with zipfile.ZipFile(output, 'r') as z:
-        # Assurez-vous de mettre le nom exact du fichier à l'intérieur du ZIP
-        with z.open('df_final_cleaned.xls') as f:  # ou 'df_final_cleaned.xls' si c'est un fichier Excel
-            clients_df = pd.read_excel(f)  # ou pd.read_excel(f) si c'est un fichier Excel
-    st.write("Données chargées avec succès.")
+    with zipfile.ZipFile(output_zip, 'r') as z:
+        with z.open('df_final_cleaned.xlsx') as f:  # Remplacez par le nom exact du fichier dans le ZIP
+            clients_df = pd.read_excel(f)
+    st.success("Les données ont été chargées avec succès.")
 except Exception as e:
-    st.error("Erreur lors de la décompression ou du chargement des données : " + str(e))
+    st.error(f"Erreur lors du chargement des données : {e}")
+    st.stop()
 
-# Continuer avec le reste de votre code Streamlit
-st.write("Aperçu des données :", clients_df.head())
-
+# Affichage d'un aperçu des données
+st.write("### Aperçu des données")
+st.write(clients_df.head())
 
 # URL de l'API déployée
 API_URL = "https://p7-api-d-ploiement-6.onrender.com/"
@@ -45,8 +41,7 @@ API_URL = "https://p7-api-d-ploiement-6.onrender.com/"
 # Fonction pour obtenir la prédiction depuis l'API
 def get_prediction(features):
     if len(features) < 73:
-        features = features + [0] * (73 - len(features))
-    features = features[:73]
+        features = features + [0] * (73 - len(features))  # Compléter avec des zéros si nécessaire
     response = requests.post(API_URL + "predict", json={"features": features})
     if response.status_code == 200:
         result = response.json()
@@ -55,8 +50,7 @@ def get_prediction(features):
         st.error("Erreur dans la réponse de l'API.")
         return None, None
 
-
-# Extraction des 20 caractéristiques importantes
+# Extraire les caractéristiques importantes
 important_features = clients_df[['EXT_SOURCES_MAX', 'HOUR_APPR_PROCESS_START', 'EXT_SOURCES_MIN', 
                                   'BURO_AMT_CREDIT_MAX_OVERDUE_MEAN', 'CREDIT_TO_GOODS_RATIO', 
                                   'INS_D365INS_IS_DPD_UNDER_120_MEAN', 'POS_CNT_INSTALMENT_MIN', 
@@ -67,125 +61,63 @@ important_features = clients_df[['EXT_SOURCES_MAX', 'HOUR_APPR_PROCESS_START', '
                                   'EXT_SOURCE_2', 'REGION_POPULATION_RELATIVE', 
                                   'PREV_SIMPLE_INTERESTS_MEAN', 'PAYMENT_RATE', 'DAYS_EMPLOYED']]
 
-# Dictionnaire de définitions des caractéristiques
-feature_definitions = {
-    'EXT_SOURCES_MAX': "Le maximum des sources externes, indiquant l'élément externe avec la valeur maximale.",
-    'HOUR_APPR_PROCESS_START': "L'heure de début du processus de demande de crédit.",
-    'EXT_SOURCES_MIN': "Le minimum des sources externes, indiquant l'élément externe avec la valeur minimale.",
-    'BURO_AMT_CREDIT_MAX_OVERDUE_MEAN': "Montant moyen du crédit maximum en retard dans le bureau de crédit.",
-    'CREDIT_TO_GOODS_RATIO': "Ratio du crédit par rapport à la valeur des biens.",
-    'INS_D365INS_IS_DPD_UNDER_120_MEAN': "Indicateur de retard de paiement sous 120 jours moyen pour les assurances.",
-    'POS_CNT_INSTALMENT_MIN': "Le nombre minimal de paiements par versement.",
-    'PREV_HOUR_APPR_PROCESS_START_MAX': "L'heure maximale de début du processus de demande de crédit dans le passé.",
-    'INSTAL_INS_IS_DPD_UNDER_120_MEAN': "Indicateur de retard de paiement sous 120 jours moyen pour les prêts à tempérament.",
-    'PREV_DAYS_TERMINATION_MAX': "Nombre maximal de jours jusqu'à la fin du processus précédent.",
-    'PREV_APP_CREDIT_PERC_MAX': "Pourcentage maximum de crédit accordé pour les demandes de crédit précédentes.",
-    'PREV_DAYS_LAST_DUE_DIFF_MEAN': "Différence moyenne de jours depuis la dernière échéance pour les crédits antérieurs.",
-    'INSTAL_LATE_PAYMENT_MEAN': "Moyenne des retards de paiement sur les installations de crédits.",
-    'INS_D365DPD_DIFF_MAX': "Différence maximale de jours depuis le dernier retard de paiement sur une période de 365 jours pour les assurances.",
-    'INCOME_TO_EMPLOYED_RATIO': "Rapport entre les revenus et le nombre d'années d'emploi.",
-    'EXT_SOURCE_2': "Score de la source externe 2, représentant un facteur de risque.",
-    'REGION_POPULATION_RELATIVE': "Population relative dans la région de résidence du client.",
-    'PREV_SIMPLE_INTERESTS_MEAN': "Moyenne des intérêts simples sur les crédits précédents.",
-    'PAYMENT_RATE': "Taux de paiement par rapport au montant du crédit initial.",
-    'DAYS_EMPLOYED': "Nombre de jours que le client a été employé."
-}
+# Interface utilisateur : Sélection du client
+st.sidebar.header("Sélection du Client")
+client_id = st.sidebar.selectbox("ID du Client :", options=clients_df.index)
 
-# Titre de l'application
-st.title("Tableau de Bord de Scoring Client")
+# Récupérer les caractéristiques pour le client sélectionné
+client_features = important_features.iloc[client_id].tolist()
 
-# Sélection du client
-client_id = st.selectbox("Sélectionnez un client", options=clients_df.index)
-features = important_features.iloc[client_id].tolist()
-
-# Calcul de la prédiction lorsque le client est sélectionné
+# Obtenir la prédiction pour le client sélectionné
 if 'prediction' not in st.session_state or st.session_state.get("client_id") != client_id:
-    prediction, probability = get_prediction(features)
+    prediction, probability = get_prediction(client_features)
     st.session_state["prediction"] = prediction
-    st.session_state["probability"] = 1 - probability
+    st.session_state["probability"] = probability
     st.session_state["client_id"] = client_id
 
-# Affichage du résultat de la prédiction
+# Afficher les résultats de la prédiction
 if st.session_state.get("prediction") is not None:
     seuil = 0.24
     decision = "Crédit Accordé" if st.session_state["probability"] >= seuil else "Crédit Refusé"
 
-    # Description et affichage de la jauge pour le score
-    st.write("Graphique de jauge montrant le score de probabilité du client sélectionné.")
+    st.write("## Résultats pour le Client Sélectionné")
+    st.write(f"**Prédiction :** {'Crédit Refusé' if st.session_state['prediction'] == 1 else 'Crédit Accordé'}")
+    st.write(f"**Probabilité de défaut :** {st.session_state['probability']:.2f}")
+    st.write(f"**Décision :** {decision}")
+
+    # Jauge pour afficher le score
+    st.write("### Score de Probabilité")
     fig_gauge = go.Figure(go.Indicator(
-        mode="gauge+number+delta",
+        mode="gauge+number",
         value=st.session_state["probability"],
         title={'text': "Score de Probabilité"},
         gauge={'axis': {'range': [0, 1]},
                'bar': {'color': "darkblue"},
                'steps': [{'range': [0, seuil], 'color': "red"},
-                         {'range': [seuil, 1], 'color': "green"}]},
-        delta={'reference': seuil, 'increasing': {'color': "green"}}
+                         {'range': [seuil, 1], 'color': "green"}]}
     ))
-    st.plotly_chart(fig_gauge, key="gauge_chart")
+    st.plotly_chart(fig_gauge)
 
-    # Affichage des résultats de la prédiction
-    st.write(f"Prédiction : {'Crédit Refusé' if st.session_state['prediction'] == 1 else 'Crédit Accordé'}")
-    st.write(f"Probabilité de défaut : {st.session_state['probability']:.2f}")
-    st.write(f"Décision basée sur le seuil : {decision}")
+# Analyse des caractéristiques
+st.write("## Analyse des Caractéristiques")
 
-    # Graphique de l'importance locale des caractéristiques
-    st.subheader("Importance Locale des Caractéristiques")
-    local_importance = pd.Series(features, index=important_features.columns)
-    fig_local = px.bar(local_importance, x=local_importance.values, y=local_importance.index, orientation='h')
-    st.plotly_chart(fig_local, key="local_importance_chart")
+# Sélection d'une caractéristique pour l'analyse univariée
+feature1 = st.selectbox("Sélectionnez une caractéristique :", important_features.columns)
+st.write(f"### Distribution de {feature1}")
+fig_feature1 = px.histogram(clients_df, x=feature1, color="TARGET", marginal="box", nbins=30)
+fig_feature1.add_vline(x=client_features[important_features.columns.get_loc(feature1)], 
+                        line_dash="dash", line_color="red")
+st.plotly_chart(fig_feature1)
 
-    # Sélection des caractéristiques pour l'analyse univariée
-    st.subheader("Analyse Univariée des Caractéristiques")
-    feature1 = st.selectbox("Sélectionnez la première caractéristique", important_features.columns)
-    feature2 = st.selectbox("Sélectionnez la deuxième caractéristique", important_features.columns)
+# Analyse bi-variée
+st.write("## Analyse Bi-Variée")
+feature2 = st.selectbox("Sélectionnez une deuxième caractéristique :", important_features.columns)
+fig_bivar = px.scatter(clients_df, x=feature1, y=feature2, color="TARGET",
+                       title=f"Relation entre {feature1} et {feature2}")
+st.plotly_chart(fig_bivar)
 
-   # Afficher la définition de la caractéristique sélectionnée pour feature1 directement sous la liste déroulante
-    st.write(f"**Définition de {feature1} :** {feature_definitions.get(feature1, 'Définition non disponible')}")
-
-    # Graphique de distribution pour feature1
-    fig_feature1 = px.histogram(clients_df, x=feature1, color="TARGET",
-                                 marginal="box", nbins=30, title=f"Distribution de {feature1}")
-    fig_feature1.add_vline(x=features[important_features.columns.get_loc(feature1)], line_width=3, line_dash="dash", line_color="black")
-    st.plotly_chart(fig_feature1, key="feature1_distribution_chart")
-
-    # Graphique de distribution pour feature2
-    fig_feature2 = px.histogram(clients_df, x=feature2, color="TARGET",
-                                 marginal="box", nbins=30, title=f"Distribution de {feature2}")
-    fig_feature2.add_vline(x=features[important_features.columns.get_loc(feature2)], line_width=3, line_dash="dash", line_color="black")
-    st.plotly_chart(fig_feature2, key="feature2_distribution_chart")
-
-    # Analyse bi-variée entre les deux caractéristiques sélectionnées
-    st.subheader("Analyse Bi-Variée des Caractéristiques")
-    scores_temp = (clients_df['TARGET'].apply(lambda x: 1 if x >= seuil else 0))
-    fig_bivar = px.scatter(clients_df, x=feature1, y=feature2, color=scores_temp,  
-                           color_continuous_scale="Viridis",
-                           title=f"Relation entre {feature1} et {feature2}")
-    fig_bivar.add_scatter(x=[features[important_features.columns.get_loc(feature1)]],
-                          y=[features[important_features.columns.get_loc(feature2)]],
-                          mode="markers", marker=dict(color="red", size=15), name="Client Sélectionné")
-    st.plotly_chart(fig_bivar, key="bivariate_analysis_chart")
-
-# Graphique de l'importance globale des caractéristiques
-st.subheader("Importance Globale des Caractéristiques")
-
-# Calcul de l'importance globale des caractéristiques en prenant la moyenne sur l'ensemble des clients
-global_importance = clients_df[important_features.columns].mean()
-
-# Trier les caractéristiques par ordre d'importance (du plus grand au plus petit)
-global_importance_sorted = global_importance.sort_values(ascending=False)
-
-# Création du graphique de l'importance globale avec les 20 caractéristiques les plus importantes
-fig_global = px.bar(global_importance_sorted, x=global_importance_sorted.values, y=global_importance_sorted.index, 
-                    orientation='h', title="Top 20 des Caractéristiques les Plus Importantes")
-
-# Mise à jour de la mise en page pour agrandir la taille du graphique
-fig_global.update_layout(
-    yaxis_title="Caractéristiques", 
-    xaxis_title="Importance Moyenne",
-    height=800,  # Hauteur agrandie pour plus d'espace
-    margin=dict(l=150)  # Laisser de l'espace à gauche pour les étiquettes longues
-)
-
-# Afficher le graphique dans Streamlit
-st.plotly_chart(fig_global, key="global_importance_chart")
+# Importance globale des caractéristiques
+st.write("## Importance Globale des Caractéristiques")
+global_importance = clients_df[important_features.columns].mean().sort_values(ascending=False)
+fig_global = px.bar(global_importance, x=global_importance.values, y=global_importance.index, orientation='h')
+st.plotly_chart(fig_global)
