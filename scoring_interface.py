@@ -12,13 +12,16 @@ import io
 st.set_page_config(page_title="Tableau de Bord de Scoring Client", page_icon=":bar_chart:")
 
 # URL partagée de Google Drive pour le fichier ZIP
-url = 'https://drive.google.com/file/d/12roUdGRFGwjOwcGLyYodxQzxPpRRHSo1/view?usp=drive_link'  # Remplacez <FILE_ID> par l'identifiant du fichier
+url = 'https://drive.google.com/uc?id=12roUdGRFGwjOwcGLyYodxQzxPpRRHSo1'
 output = 'df_final_cleaned.zip'
 
 # Télécharger le fichier ZIP depuis Google Drive
 try:
     gdown.download(url, output, quiet=False)
     st.write("Le fichier ZIP a été téléchargé avec succès.")
+    # Vérifier que le fichier est bien un ZIP
+    if not zipfile.is_zipfile(output):
+        st.error("Le fichier téléchargé n'est pas un fichier ZIP valide.")
 except Exception as e:
     st.error("Erreur lors du téléchargement du fichier ZIP : " + str(e))
 
