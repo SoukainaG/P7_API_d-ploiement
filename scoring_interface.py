@@ -12,7 +12,7 @@ import io
 st.set_page_config(page_title="Tableau de Bord de Scoring Client", page_icon=":bar_chart:")
 
 # URL partagée de Google Drive pour le fichier ZIP
-url = 'https://drive.google.com/uc?id=12roUdGRFGwjOwcGLyYodxQzxPpRRHSo1'
+url = 'https://drive.google.com/uc?id=1o9nJqQj4m6TCiuAIn1PUpv_GLDkZdtDl'
 output = 'df_final_cleaned.zip'
 
 # Télécharger le fichier ZIP depuis Google Drive
