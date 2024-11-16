@@ -24,7 +24,7 @@ except Exception as e:
 # Décompresser le fichier ZIP et charger les données
 try:
     with zipfile.ZipFile(output_zip, 'r') as z:
-        with z.open('df_final_cleaned.xlsx') as f:  # Remplacez par le nom exact du fichier dans le ZIP
+        with z.open('df_final_cleaned.xls') as f:  # Remplacez par le nom exact du fichier dans le ZIP
             clients_df = pd.read_excel(f)
     st.success("Les données ont été chargées avec succès.")
 except Exception as e:
