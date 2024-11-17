@@ -8,12 +8,13 @@ import plotly.express as px
 # Configuration de la page Streamlit
 st.set_page_config(page_title="Tableau de Bord de Scoring Client", page_icon=":bar_chart:")
 
-# URL brute de votre fichier CSV sur GitHub
-csv_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/main/df_final_cleaned_S.xls'
+# URL du fichier Excel brut hébergé sur GitHub
+excel_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/master/df_final_cleaned_S.xls'
 
-# Charger les données directement depuis GitHub
+# Télécharger et charger les données
 try:
-    clients_df = pd.read_csv(csv_url)
+    # Charger directement les données depuis l'URL
+    clients_df = pd.read_excel(excel_url)
     st.success("Les données ont été chargées avec succès depuis GitHub.")
 except Exception as e:
     st.error(f"Erreur lors du chargement des données : {e}")
