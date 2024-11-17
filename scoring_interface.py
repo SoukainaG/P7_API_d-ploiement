@@ -13,8 +13,8 @@ excel_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/mast
 
 # Télécharger et charger les données
 try:
-    # Charger directement les données depuis l'URL
-    clients_df = pd.read_excel(excel_url)
+    # Charger directement les données depuis l'URL, spécifiez l'engine 'xlrd' pour le format .xls
+    clients_df = pd.read_excel(excel_url, engine='xlrd')
     st.success("Les données ont été chargées avec succès depuis GitHub.")
 except Exception as e:
     st.error(f"Erreur lors du chargement des données : {e}")
