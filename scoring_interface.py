@@ -4,29 +4,17 @@ import streamlit as st
 import requests
 import plotly.graph_objects as go
 import plotly.express as px
-import gdown
-import zipfile
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="Tableau de Bord de Scoring Client", page_icon=":bar_chart:")
 
-# URL du fichier ZIP partagé via Google Drive
-zip_url = 'https://drive.google.com/uc?id=1o9nJqQj4m6TCiuAIn1PUpv_GLDkZdtDl'
-output_zip = 'df_final_cleaned.zip'
+# URL brute de votre fichier CSV sur GitHub
+csv_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/main/df_final_cleaned_S.csv'
 
-# Télécharger le fichier ZIP
+# Charger les données directement depuis GitHub
 try:
-    gdown.download(zip_url, output_zip, quiet=False)
-    st.success("Le fichier ZIP a été téléchargé avec succès.")
-except Exception as e:
-    st.error(f"Erreur lors du téléchargement du fichier ZIP : {e}")
-
-# Décompresser le fichier ZIP et charger les données
-try:
-    with zipfile.ZipFile(output_zip, 'r') as z:
-        with z.open('df_final_cleaned.xls') as f:  # Remplacez par le nom exact du fichier dans le ZIP
-            clients_df = pd.read_excel(f)
-    st.success("Les données ont été chargées avec succès.")
+    clients_df = pd.read_csv(csv_url)
+    st.success("Les données ont été chargées avec succès depuis GitHub.")
 except Exception as e:
     st.error(f"Erreur lors du chargement des données : {e}")
     st.stop()
