@@ -177,7 +177,13 @@ global_importance_sorted = global_importance.sort_values(ascending=False)
 # Création du graphique de l'importance globale avec les 20 caractéristiques les plus importantes
 fig_global = px.bar(global_importance_sorted, x=global_importance_sorted.values, y=global_importance_sorted.index,
                     orientation='h', title="Top 20 des Caractéristiques les Plus Importantes")
-fig_global.update_layout(yaxis_title="Caractéristiques", xaxis_title="Importance Moyenne")
+# Modifier la taille de la figure pour qu'elle soit plus grande et affiche mieux les noms des caractéristiques
+fig_global.update_layout(
+    yaxis_title="Caractéristiques",
+    xaxis_title="Importance Moyenne",
+    height=800,  # Augmenter la hauteur de la figure
+    margin=dict(l=150, r=20, t=50, b=100)  # Ajuster les marges pour mieux afficher les labels
+)
 
 # Afficher le graphique dans Streamlit
 st.plotly_chart(fig_global, key="global_importance_chart")
