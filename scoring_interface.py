@@ -9,12 +9,12 @@ import plotly.express as px
 st.set_page_config(page_title="Tableau de Bord de Scoring Client", page_icon=":bar_chart:")
 
 # URL du fichier Excel brut hébergé sur GitHub
-excel_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/master/df_final_cleaned_S.xls'
+excel_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/master/df_final_cleaned_S.xlsx'
 
 # Télécharger et charger les données
 try:
-    # Charger directement les données depuis l'URL, spécifiez l'engine 'xlrd' pour le format .xls
-    clients_df = pd.read_excel(excel_url, engine='xlrd')
+    # Charger directement les données depuis l'URL, spécifiez l'engine 'openpyxl' pour le format .xlsx
+    clients_df = pd.read_excel(excel_url, engine='openpyxl')
     st.success("Les données ont été chargées avec succès depuis GitHub.")
 except Exception as e:
     st.error(f"Erreur lors du chargement des données : {e}")
