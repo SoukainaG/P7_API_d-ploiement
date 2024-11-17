@@ -9,7 +9,7 @@ import plotly.express as px
 st.set_page_config(page_title="Tableau de Bord de Scoring Client", page_icon=":bar_chart:")
 
 # URL brute de votre fichier CSV sur GitHub
-csv_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/main/df_final_cleaned_S.csv'
+csv_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/main/df_final_cleaned_S.xls'
 
 # Charger les données directement depuis GitHub
 try:
