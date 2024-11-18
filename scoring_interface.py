@@ -8,7 +8,7 @@ import plotly.express as px
 st.set_page_config(page_title="Tableau de Bord de Scoring Client", page_icon=":bar_chart:")
 
 # URL du fichier Excel brut hébergé sur GitHub
-excel_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/master/data_R.xlsx'
+excel_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/master/df_final_cleaned_S.xlsx'
 
 # Charger les données depuis l'URL
 try:
