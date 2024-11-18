@@ -90,7 +90,7 @@ if 'prediction' not in st.session_state or st.session_state.get("client_id") != 
 
 # Affichage du résultat de la prédiction
 if st.session_state.get("prediction") is not None:
-    seuil = 0.24
+    seuil = 0.87
     decision = "Crédit Accordé" if st.session_state["probability"] >= seuil else "Crédit Refusé"
 
     # Description et affichage de la jauge pour le score
