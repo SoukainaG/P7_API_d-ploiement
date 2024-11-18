@@ -78,8 +78,14 @@ feature_definitions = {
 st.title("Tableau de Bord de Scoring Client")
 
 # Sélection du client
-client_id = st.selectbox("Sélectionnez un client", options=clients_df.index)
-features = important_features.iloc[client_id].tolist()
+client_id = st.selectbox("Sélectionnez un client", options=clients_df['SK_ID_CURR'])
+# Trouver la ligne correspondant à SK_ID_CURR dans important_features
+# On suppose que `important_features` a aussi une colonne 'SK_ID_CURR' ou un index aligné avec `SK_ID_CURR`
+client_features = important_features[important_features['SK_ID_CURR'] == client_id]
+
+# Extraire les caractéristiques sous forme de liste
+features = client_features.drop(columns=['SK_ID_CURR']).iloc[0].tolist()  # Si vous voulez exclure la colonne 'SK_ID_CURR'
+
 
 # Calcul de la prédiction lorsque le client est sélectionné
 if 'prediction' not in st.session_state or st.session_state.get("client_id") != client_id:
