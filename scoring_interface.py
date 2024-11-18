@@ -8,7 +8,7 @@ import plotly.express as px
 st.set_page_config(page_title="Tableau de Bord de Scoring Client", page_icon=":bar_chart:")
 
 # URL du fichier Excel brut hébergé sur GitHub
-excel_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/master/df_final_cleaned_S.xlsx'
+excel_url = 'https://raw.githubusercontent.com/SoukainaG/P7_API_d-ploiement/master/data_R.xlsx'
 
 # Charger les données depuis l'URL
 try:
@@ -18,10 +18,6 @@ try:
 except Exception as e:
     st.error(f"Erreur lors du chargement des données : {e}")
     st.stop()
-
-# Affichage d'un aperçu des données
-st.write("### Aperçu des données")
-st.write(clients_df.head())
 
 # URL de l'API déployée
 API_URL = "https://p7-api-d-ploiement-6.onrender.com/"
