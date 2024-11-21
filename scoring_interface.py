@@ -110,7 +110,6 @@ if st.session_state.get("prediction") is not None:
     # Affichage des résultats de la prédiction
     st.write(f"Prédiction : {'Crédit Refusé' if st.session_state['prediction'] == 1 else 'Crédit Accordé'}")
     st.write(f"Probabilité de défaut : {st.session_state['probability']:.2f}")
-    st.write(f"Décision basée sur le seuil : {decision}")
 
     # Graphique de l'importance locale des caractéristiques
     st.subheader("Importance Locale des Caractéristiques")
